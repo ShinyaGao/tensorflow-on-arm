@@ -55,7 +55,7 @@ function log_app_msg() {
 
 function create_tempdir()
 {
-  WORKDIR=${WORKDIR}/sources/
+  WORKDIR=${WORKDIR}/sources
   if [ ! -d $WORKDIR ]; then
     mkdir -p ${WORKDIR} || {
       log_failure_msg "error when creates workdir $WORKDIR"
@@ -122,6 +122,11 @@ function toolchain()
   CROSSTOOL_DIR="${WORKDIR}/toolchain/${CROSSTOOL_DIR}/"
 
   [ ! -d "${CROSSTOOL_DIR}/${CROSSTOOL_NAME}/bin/" ] && {
+      echo $CROSSTOOL_NAME
+      [ "$CROSSTOOL_NAME" != "arm-hisiv300-linux-uclibcgnueabi" ] || {
+      log_failure_msg "arm-hisiv300-linux-uclibcgnueabi cross compile tool not found"
+      exit 1
+    }
     mkdir -p ${WORKDIR}/toolchain/
     wget --no-check-certificate $CROSSTOOL_URL -O toolchain.tar.xz || {
       log_failure_msg "error when download crosstool"
@@ -178,6 +183,13 @@ function download_tensorflow()
        exit 1
      }
   fi
+
+  [ "$CROSSTOOL_NAME" == "arm-hisiv300-linux-uclibcgnueabi" ] || {
+      grep -Rl "lib64" | xargs sed -i 's/lib64/lib/g' ||{
+          log_failure_msg "replace tf lib64 to lib failed"
+          exit 1
+      }
+  }
 
   if [ ! -z "$CROSSTOOL_DIR" ] && [ ! -z "$CROSSTOOL_NAME" ]; then
     tf_toolchain_patch "$CROSSTOOL_NAME" "$CROSSTOOL_DIR" "$CROSSTOOL_EXTRA_INCLUDE" || {

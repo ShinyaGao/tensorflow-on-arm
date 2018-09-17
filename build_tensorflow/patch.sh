@@ -25,7 +25,7 @@ function tf_toolchain_patch()
   local CROSSTOOL_NAME="$1"
   local CROSSTOOL_DIR="$2"
   local CROSSTOOL_EXTRA_INCLUDE="$3"
-  [ -z "$CROSSTOOL_EXTRA_INCLUDE" ] && CROSSTOOL_EXTRA_INCLUDE="/usr/local/include/"
+  #[ -z "$CROSSTOOL_EXTRA_INCLUDE" ] && CROSSTOOL_EXTRA_INCLUDE="/usr/local/include/"
   local CROSSTOOL_VERSION=$($CROSSTOOL_DIR/bin/$CROSSTOOL_NAME-gcc -dumpversion)
   git apply << EOF
 diff --git a/BUILD.local_arm_compiler b/BUILD.local_arm_compiler
@@ -212,7 +212,7 @@ index 000000000..3ff006da8
 +  toolchain_identifier: "local_freebsd"
 +}
 +default_toolchain {
-+  cpu: "armeabi"
++  cpu: "hi3536"
 +  toolchain_identifier: "$CROSSTOOL_NAME"
 +}
 +default_toolchain {
@@ -262,13 +262,13 @@ index 000000000..3ff006da8
 +  tool_path { name: "strip" path: "$CROSSTOOL_DIR/bin/$CROSSTOOL_NAME-strip" }
 +
 +  cxx_builtin_include_directory: "$CROSSTOOL_DIR/$CROSSTOOL_NAME/include/c++/$CROSSTOOL_VERSION/"
-+  cxx_builtin_include_directory: "$CROSSTOOL_DIR/$CROSSTOOL_NAME/sysroot/usr/include/"
-+  cxx_builtin_include_directory: "$CROSSTOOL_DIR/$CROSSTOOL_NAME/libc/usr/include/"
++  cxx_builtin_include_directory: ""
++  cxx_builtin_include_directory: ""
 +  cxx_builtin_include_directory: "$CROSSTOOL_DIR/lib/gcc/$CROSSTOOL_NAME/$CROSSTOOL_VERSION/include"
 +  cxx_builtin_include_directory: "$CROSSTOOL_DIR/lib/gcc/$CROSSTOOL_NAME/$CROSSTOOL_VERSION/include-fixed"
-+  cxx_builtin_include_directory: "/usr/include"
-+  cxx_builtin_include_directory: "/usr/include/$CROSSTOOL_NAME"
-+  cxx_builtin_include_directory: "$CROSSTOOL_EXTRA_INCLUDE"
++  cxx_builtin_include_directory: ""
++  cxx_builtin_include_directory: ""
++  cxx_builtin_include_directory: ""
 +
 +  cxx_flag: "-std=c++11"
 +  cxx_flag: "-isystem"
